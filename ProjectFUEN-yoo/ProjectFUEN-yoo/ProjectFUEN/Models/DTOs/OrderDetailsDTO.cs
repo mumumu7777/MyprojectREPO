@@ -12,9 +12,9 @@ namespace ProjectFUEN.Models.DTOs
       
         public int Id { get; set; }
         public int MemberId { get; set; }
-       
+        [Display(Name = "訂單日期")]
         public DateTime OrderDate { get; set; }
- 
+        [Display(Name = "地址")]
         public string Address { get; set; }
         [Display(Name = "訂單狀態")]
         public int State { get; set; }

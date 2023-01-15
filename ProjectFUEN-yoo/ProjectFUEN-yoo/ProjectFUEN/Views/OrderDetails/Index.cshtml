@@ -26,30 +26,37 @@
 
             @using (Html.BeginForm("Search", "OrderDetails", FormMethod.Get))
             {
-                <div class="col-md-4 row ">
-                    <div class="col-md-4">出貨狀態:@Html.DropDownList("state", state, new { @class = "form-control" })</div>
+                
 
 
 
 
 
-                    <div class="input-group">
 
-                        <input type="text" name="account" class="col-3 " value="" id="Searchtext" placeholder="請輸入.." />
-
-
-                        <input type="submit" class=" btn btn-dark col-1  " value="" id="SearchClick" />
+                    <div class="input-group col-12 d-flex justify-content-center  ">
 
 
+
+                        
+
+
+
+
+                        <div class="col-4">出貨狀態:@Html.DropDownList("state", state, new { @class = "form-control" })</div>
+
+
+
+                    <div class="input-group justify-content-center">
+                        <input type="text" name="account" class=" " value="" id="Searchtext" placeholder="請輸入.." />
+                        <button type="submit" class=" btn btn-dark   " value="" id="SearchClick">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                       
                     </div>
 
-                  
-
-                   
-
-
-                    <i class="fa-solid fa-magnifying-glass" ></i>
-                </div>
+                    
+                
             }
           
 
@@ -141,6 +148,7 @@
 @section Scripts
     {
     <script>
+
 
         $(".pagination li").css({
             "background-color": "yellow",
