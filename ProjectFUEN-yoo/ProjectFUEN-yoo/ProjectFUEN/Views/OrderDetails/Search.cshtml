@@ -1,9 +1,13 @@
 ﻿@model IEnumerable<ProjectFUEN.Models.DTOs.OrderDetailsDTO>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core.Fluent
+@using X.PagedList.Web.Common
 
 @{
     ViewData["Title"] = "Index";
     var accountname = ViewBag.accountname as string;
-
+    var pagedList = (IPagedList)ViewBag.OrderDetailDto;
 }
 
 <h1>訂單管理</h1>
@@ -14,24 +18,24 @@
         <div class="row list-group-horizontal ">
 
 
-           @using (Html.BeginForm("Search", "OrderDetails",FormMethod.Get))
+            @using (Html.BeginForm("Search", "OrderDetails", FormMethod.Get))
             {
                 <div class="col-md-4 list-group-horizontal">
                     <input type="text" name="account" class="" value="" id="Searchtext" placeholder="請輸入.." />
                     <input type="submit" class="btn btn-dark " value="Search" id="SearchClick" />
-                 
+
                 </div>
             }
 
 
-@*
-    <div class="col-md-4 list-group-horizontal">
+            @*
+            <div class="col-md-4 list-group-horizontal">
             <input type="text" name="MemberName" class="" value="" id="Searchtext" placeholder="請輸入.."/>
             <input type="button" class="btn btn-dark " value="Search" id="SearchClick" />
             <button class="btn btn-dark" id="SearchClick">Search</button>
             </div>
-           *@
-             
+            *@
+
 
 
         </div>
@@ -42,7 +46,7 @@
 <table class="table">
     <thead>
         <tr>
-           <th>
+            <th>
                 @Html.DisplayNameFor(model => model.Member.RealName)
             </th>
             <th>
@@ -84,19 +88,60 @@
                 </td>
 
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">編輯</a> |
+
+                    <a asp-action="Edit" asp-route-id="@item.Id" data-fancybox data-type="iframe" class="fc1">
+                        編輯
+                    </a> |
+                    @*       <a asp-action="Edit" asp-route-id="@item.Id">編輯</a> |*@
                     <a asp-controller="OrderItems" asp-action="Details" asp-route-id="@item.Id">詳細資訊</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">刪除</a>
                 </td>
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <td class="text-muted" colspan="5">
+                第 @(pagedList.PageCount < pagedList.PageNumber ? 0 : pagedList.PageNumber) 頁，共 @pagedList.PageCount 頁。
+                每頁 @pagedList.PageSize 筆資料，全部共有 @pagedList.TotalItemCount 筆資料。
+            </td>
+        </tr>
+    </tfoot>
+
+    <div style="align-content:center" class="text-dark page-custom1">
+
+        @(Html.Pager(pagedList)
+            .Url(page => Url.Action("Search", new { page }))
+            .Build())
+    </div>
 </table>
 
 
 @section Scripts
     {
     <script>
+        $('.fc1').fancybox({
+            iframe: {
+                css: {
+                    width: '600px',
+                    height: '500px',
+
+                }
+            },
+            afterClose: function () {
+                // 關閉後重load資料
+                location.reload();
+            }
+        });
+
+        $(".pagination li").css({
+            "background-color": "yellow",
+            "margin-right": "0.25em",
+            "margin-left": "0.25em"
+
+        })
+        $(".pagination .active").css({ "background-color": "#ccc" })
+        $(".pagination .PagedList-skipToNext").css({ "background-color": "red" })
 
         //$("#SearchClick").on("click", function () {
 

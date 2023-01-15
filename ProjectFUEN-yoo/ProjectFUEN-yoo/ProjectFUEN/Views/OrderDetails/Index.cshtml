@@ -9,7 +9,9 @@
     ViewData["Title"] = "Index";
     var pagedList = (IPagedList)ViewBag.OrderDetail;
 
+
 }
+
 
 
 <h1>訂單管理</h1>
@@ -88,7 +90,9 @@
                 </td>
 
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">編輯</a> |
+                    <a href="OrderDetails/Edit/@item.Id" data-fancybox data-type="iframe" class="fc1">
+                        編輯
+                    </a> |
                     <a asp-controller="OrderItems" asp-action="Details" asp-route-id="@item.Id">詳細資訊</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">刪除</a>
                 </td>
@@ -110,70 +114,83 @@
         @(Html.Pager(pagedList)
             .Url(page => Url.Action("Index", new { page }))
             .Build())
-
-
     </div>
-
-
 </table>
-
 
 @section Scripts
     {
     <script>
+
         $(".pagination li").css({
             "background-color": "yellow",
             "margin-right": "0.25em",
             "margin-left": "0.25em"
+
         })
         $(".pagination .active").css({ "background-color": "#ccc" })
         $(".pagination .PagedList-skipToNext").css({ "background-color": "red" })
 
-                //$("#SearchClick").on("click", function () {
 
-                //    $.ajax({
-                //        type:"GET",
-                //        url: "https://localhost:7027/OrderDetails/Search/?account=" + $("#Searchtext").val()
+        $('.fc1').fancybox({
+            iframe: {
+                css: {
+                    width: '600px',
+                    height: '500px',
 
-                //    }).done(function(data){
-                //        console.log(data)
+                }
+            },
+            afterClose: function () {
+                // 關閉後重load資料
+                location.reload();
+            }
+        });
 
-                //    })
-                //    .fail(function(err){err.statuxtext});
+        //$("#SearchClick").on("click", function () {
 
-                //} )
+        //    $.ajax({
+        //        type:"GET",
+        //        url: "https://localhost:7027/OrderDetails/Search/?account=" + $("#Searchtext").val()
+
+        //    }).done(function(data){
+        //        console.log(data)
+
+        //    })
+        //    .fail(function(err){err.statuxtext});
+
+        //} )
+
 
     </script>
 }
 
-@functions{
-       public string GetStateName(int state)
+    @functions {
+    public string GetStateName(int state)
+    {
+        string StateName = "";
+        switch (state)
         {
-            string StateName = "";
-            switch (state)
-            {
-                case 0:
-                    StateName = "未出貨";
-                    break;
-                case 1:
-                    StateName = "已出貨";
-                    break;
-                case 2:
-                    StateName = "運送中";
-                    break;
-                case 3:
-                    StateName = "已簽收";
-                    break;
-                case 4:
-                    StateName = "已完成";
-                    break;
-                default:
-                    StateName = "訂單異常";
-                    break;
+            case 0:
+                StateName = "未出貨";
+                break;
+            case 1:
+                StateName = "已出貨";
+                break;
+            case 2:
+                StateName = "運送中";
+                break;
+            case 3:
+                StateName = "已簽收";
+                break;
+            case 4:
+                StateName = "已完成";
+                break;
+            default:
+                StateName = "訂單異常";
+                break;
 
-            }
-            return StateName;
         }
+        return StateName;
+    }
 }
 
 

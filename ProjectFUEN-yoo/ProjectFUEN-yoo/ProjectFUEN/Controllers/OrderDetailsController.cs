@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjectFUEN.Models.DTOs;
 using ProjectFUEN.Models.EFModels;
+using ProjectFUEN.Models.modelsVM;
 using X.PagedList;
 
 namespace ProjectFUEN.Controllers
@@ -32,14 +35,8 @@ namespace ProjectFUEN.Controllers
             const int pageSize = 1;
 
             ViewBag.OrderDetail = GetPagedProcess(page, pageSize);
-            //填入頁面資料
-
-
-            //return View(await projectFUENContext.ToListAsync());
-
+ 
             return View(await projectFUENContext.Skip<OrderDetail>(pageSize * ((page ?? 1) - 1)).Take(pageSize).ToListAsync());
-
-
 
         }
 
@@ -51,6 +48,19 @@ namespace ProjectFUEN.Controllers
             // 從資料庫取得資料
             var listUnpaged = GetStuffFromDatabase();
             IPagedList<OrderDetail> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
+            // 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
+            if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount)
+                return null;
+            return pagelist;
+        }
+
+        protected IPagedList<OrderDetailsDTO> GetPagedProcess(int? page, int pageSize, IEnumerable<OrderDetailsDTO> listUnpaged)
+        {
+            // 過濾從client傳送過來有問題頁數
+            if (page.HasValue && page < 1)
+                return null;
+ 
+            IPagedList<OrderDetailsDTO> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
             // 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
             if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount)
                 return null;
@@ -87,10 +97,8 @@ namespace ProjectFUEN.Controllers
         //}
 
 
-
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDetailsDTO>>> Search(string account)
+        public async Task<ActionResult<IEnumerable<OrderDetailsDTO>>> Search(string account, int? page = 1)
         {
             var emaccount = _context.OrderDetails.Include(o => o.Member).Select(x => new OrderDetailsDTO
             {
@@ -107,10 +115,14 @@ namespace ProjectFUEN.Controllers
                 emaccount = emaccount.Where(s => s.EmailAccount.Contains(account));
             }
 
-            
+            const int pageSize = 1;
+
+            ViewBag.OrderDetailDto = GetPagedProcess(page, pageSize, emaccount);
 
 
-            return View(emaccount.ToListAsync().Result);
+
+            return View(await emaccount.Skip(pageSize * ((page ?? 1) - 1)).Take(pageSize).ToListAsync());
+
 
         }
 
@@ -253,9 +265,10 @@ namespace ProjectFUEN.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,MemberId,OrderDate,Address,State")] OrderDetail orderDetail)
         {
+            string msg = "";
             if (id != orderDetail.Id)
             {
-                return NotFound();
+                msg = "新增失敗(更新資料列不正確)!!";
             }
 
             if (ModelState.IsValid)
@@ -264,22 +277,25 @@ namespace ProjectFUEN.Controllers
                 {
                     _context.Update(orderDetail);
                     await _context.SaveChangesAsync();
+                    msg = "新增成功 !!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!OrderDetailExists(orderDetail.Id))
                     {
-                        return NotFound();
+                        msg = "新增失敗(找不到商品)!!";
                     }
                     else
                     {
-                        throw;
+                        msg = "新增失敗(其他錯誤)!!";
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["MemberId"] = new SelectList(_context.Members, "Id", "EmailAccount", orderDetail.MemberId);
-            return View(orderDetail);
+
+            //ViewData["MemberId"] = new SelectList(_context.Members, "Id", "EmailAccount", orderDetail.MemberId);
+            // 直接重寫頁面並關閉fancybox
+            await Response.WriteAsync($"<script>parent.$.fancybox.close();alert('{msg}');</script>");
+            return Ok();
         }
 
         // GET: OrderDetails/Delete/5
