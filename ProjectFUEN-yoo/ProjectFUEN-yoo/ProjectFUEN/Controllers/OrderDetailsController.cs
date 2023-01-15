@@ -29,13 +29,13 @@ namespace ProjectFUEN.Controllers
         }
 
         // GET: OrderDetails
-        public async Task<IActionResult> Index(int? page = 1)
+        public async Task<IActionResult> Index(int? state, int? page = 1 )
         {
             var projectFUENContext = _context.OrderDetails.Include(o => o.Member);
             const int pageSize = 1;
 
             ViewBag.OrderDetail = GetPagedProcess(page, pageSize);
- 
+            ViewBag.State = GetState(state);
             return View(await projectFUENContext.Skip<OrderDetail>(pageSize * ((page ?? 1) - 1)).Take(pageSize).ToListAsync());
 
         }
@@ -98,9 +98,12 @@ namespace ProjectFUEN.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDetailsDTO>>> Search(string account, int? page = 1)
-        {
-            var emaccount = _context.OrderDetails.Include(o => o.Member).Select(x => new OrderDetailsDTO
+        public async Task<ActionResult<IEnumerable<OrderDetailsDTO>>> Search(int? state,string account, int? page = 1)
+        {  
+            const int pageSize = 1;
+            ViewBag.State = GetState(state);
+
+            var data = _context.OrderDetails.Include(o => o.Member).Select(x => new OrderDetailsDTO
             {
                 Id = x.Id,
                 Member = x.Member,
@@ -110,20 +113,35 @@ namespace ProjectFUEN.Controllers
                 EmailAccount = x.Member.EmailAccount,
             });
 
-            if (!string.IsNullOrEmpty(account))
+            if (state.HasValue) data = data.Where(x => x.State == state.Value);
+           
+
+            if (string.IsNullOrEmpty(account)==false)
             {
-                emaccount = emaccount.Where(s => s.EmailAccount.Contains(account));
+                data = data.Where(s => s.EmailAccount.Contains(account));
             }
-
-            const int pageSize = 1;
-
-            ViewBag.OrderDetailDto = GetPagedProcess(page, pageSize, emaccount);
+     
+            ViewBag.OrderDetailDto = GetPagedProcess(page, pageSize, data);
 
 
 
-            return View(await emaccount.Skip(pageSize * ((page ?? 1) - 1)).Take(pageSize).ToListAsync());
+            return View(await data.Skip(pageSize * ((page ?? 1) - 1)).Take(pageSize).ToListAsync());
 
 
+        }
+
+        private IEnumerable<SelectListItem> GetState(int? State)
+        {
+            var items = _context.OrderDetails
+            .AsEnumerable()
+            .Select(c => new SelectListItem { 
+                Value = c.State.ToString(),
+                Text= GetStateName(c.State),
+                Selected = (State.HasValue && c.State == State.Value)
+            })
+            .Prepend(new SelectListItem { Value = string.Empty, Text = "請選擇..." });
+
+            return items;
         }
 
         //[HttpGet]
@@ -229,17 +247,7 @@ namespace ProjectFUEN.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MemberId,OrderDate,Address,State")] OrderDetail orderDetail)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(orderDetail);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MemberId"] = new SelectList(_context.Members, "Id", "EmailAccount", orderDetail.MemberId);
-            return View(orderDetail);
-        }
+  
 
         // GET: OrderDetails/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -263,7 +271,7 @@ namespace ProjectFUEN.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MemberId,OrderDate,Address,State")] OrderDetail orderDetail)
+        public async Task<IActionResult> Edit(int id,[Bind("Id,MemberId,OrderDate,Address,State")] OrderDetail orderDetail)
         {
             string msg = "";
             if (id != orderDetail.Id)
@@ -339,6 +347,34 @@ namespace ProjectFUEN.Controllers
         private bool OrderDetailExists(int id)
         {
           return _context.OrderDetails.Any(e => e.Id == id);
+        }
+
+        private string GetStateName(int state)
+        {
+            string StateName = "";
+            switch (state)
+            {
+                case 0:
+                    StateName = "未出貨";
+                    break;
+                case 1:
+                    StateName = "已出貨";
+                    break;
+                case 2:
+                    StateName = "運送中";
+                    break;
+                case 3:
+                    StateName = "已簽收";
+                    break;
+                case 4:
+                    StateName = "已完成";
+                    break;
+                default:
+                    StateName = "訂單異常";
+                    break;
+
+            }
+            return StateName;
         }
     }
 }

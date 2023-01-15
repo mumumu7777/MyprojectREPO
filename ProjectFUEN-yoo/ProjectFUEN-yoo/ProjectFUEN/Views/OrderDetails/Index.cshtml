@@ -8,6 +8,8 @@
 @{
     ViewData["Title"] = "Index";
     var pagedList = (IPagedList)ViewBag.OrderDetail;
+    var state = ViewBag.state as IEnumerable<SelectListItem>;
+
 
 
 }
@@ -24,13 +26,32 @@
 
             @using (Html.BeginForm("Search", "OrderDetails", FormMethod.Get))
             {
-                <div class="col-md-4 ">
-                    <input type="text" name="account" class="col-3 " value="" id="Searchtext" placeholder="請輸入.." />
-                    <input type="submit" class="btn btn-dark col-3 " value="Search" id="SearchClick" />
+                <div class="col-md-4 row ">
+                    <div class="col-md-4">出貨狀態:@Html.DropDownList("state", state, new { @class = "form-control" })</div>
 
+
+
+
+
+                    <div class="input-group">
+
+                        <input type="text" name="account" class="col-3 " value="" id="Searchtext" placeholder="請輸入.." />
+
+
+                        <input type="submit" class=" btn btn-dark col-1  " value="" id="SearchClick" />
+
+
+                    </div>
+
+                  
+
+                   
+
+
+                    <i class="fa-solid fa-magnifying-glass" ></i>
                 </div>
             }
-
+          
 
             @*
             <div class="col-md-4 list-group-horizontal">
@@ -145,19 +166,19 @@
             }
         });
 
-        //$("#SearchClick").on("click", function () {
+                //$("#SearchClick").on("click", function () {
 
-        //    $.ajax({
-        //        type:"GET",
-        //        url: "https://localhost:7027/OrderDetails/Search/?account=" + $("#Searchtext").val()
+                //    $.ajax({
+                //        type:"GET",
+                //        url: "https://localhost:7027/OrderDetails/Search/?account=" + $("#Searchtext").val()
 
-        //    }).done(function(data){
-        //        console.log(data)
+                //    }).done(function(data){
+                //        console.log(data)
 
-        //    })
-        //    .fail(function(err){err.statuxtext});
+                //    })
+                //    .fail(function(err){err.statuxtext});
 
-        //} )
+                //} )
 
 
     </script>
@@ -192,5 +213,7 @@
         return StateName;
     }
 }
+
+
 
 
