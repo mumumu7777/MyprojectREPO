@@ -35,8 +35,10 @@ namespace ProjectFUEN.Controllers
             }
 
             var orderItem = await _context.OrderItems
+             
                 .Include(o => o.Order)
                 .Include(o => o.Product)
+
                 .FirstOrDefaultAsync(m => m.OrderId == id);
             if (orderItem == null)
             {
@@ -75,7 +77,7 @@ namespace ProjectFUEN.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderId,ProductId,ProductName,ProductPrice,ProductNumber")] OrderItem orderItem)
+        public async Task<IActionResult> Create([Bind("OrderId,ProductId,ProductName,ProductPrice,ProductNumber")] OrderItemVM orderItem)
         {
             if (ModelState.IsValid)
             {
@@ -111,7 +113,7 @@ namespace ProjectFUEN.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,ProductId,ProductName,ProductPrice,ProductNumber")] OrderItem orderItem)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,ProductId,ProductName,ProductPrice,ProductNumber")] OrderItemsDTO orderItem)
         {
             if (id != orderItem.OrderId)
             {

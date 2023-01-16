@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjectFUEN.Models.DTOs;
 using ProjectFUEN.Models.EFModels;
-using ProjectFUEN.Models.modelsVM;
+
 using X.PagedList;
 
 namespace ProjectFUEN.Controllers
@@ -98,9 +98,9 @@ namespace ProjectFUEN.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDetailsDTO>>> Search(int? state,string account, int? page = 1)
+        public async Task<ActionResult<IEnumerable<OrderDetailsDTO>>> Search(int state1,int? state,string account, int? page = 1)
         {  
-            const int pageSize = 1;
+            const int pageSize = 2;
             ViewBag.State = GetState(state);
 
             var data = _context.OrderDetails.Include(o => o.Member).Select(x => new OrderDetailsDTO
@@ -130,16 +130,35 @@ namespace ProjectFUEN.Controllers
 
         }
 
-        private IEnumerable<SelectListItem> GetState(int? State)
+        //public IEnumerable<SelectListItem> GetState(int? State)
+        //{
+        //    var defaultdata = _context.OrderDetails.Select(x => x.State);
+        //    var selectList =_context.OrderDetails.AsEnumerable().Select(C=> new List<SelectListItem>
+        //    {
+        //        new SelectListItem{Value=C.State.ToString()},
+        //        new SelectListItem{Text="text-0",Value="value-0" },
+        //        new SelectListItem{Text="text-1",Value="value-1" },
+        //        new SelectListItem{Text="text-2",Value="value-2" },
+        //        new SelectListItem{Text="text-3",Value="value-3" }
+        //    } );
+
+
+
+        //    selectList.Where(q => q.Value == "value-2").First().Selected = true;
+        //    ViewBag.SelectList = selectList;
+
+        //}
+
+        public IEnumerable<SelectListItem> GetState(int? State)
         {
             var items = _context.OrderDetails
             .AsEnumerable()
-            .Select(c => new SelectListItem { 
+            .Select(c => new SelectListItem
+            {
                 Value = c.State.ToString(),
-                Text= GetStateName(c.State),
+                Text = GetStateName(c.State),
                 Selected = (State.HasValue && c.State == State.Value)
-            })
-            .Prepend(new SelectListItem { Value = string.Empty, Text = "請選擇..." });
+            }).Prepend(new SelectListItem { Value = string.Empty, Text = "請選擇..." });
 
             return items;
         }
@@ -257,12 +276,17 @@ namespace ProjectFUEN.Controllers
                 return NotFound();
             }
 
-            var orderDetail = await _context.OrderDetails.FindAsync(id);
+            var orderDetail = await _context.OrderDetails.Include(x => x.Member).FirstAsync(x => x.Id == id);
             if (orderDetail == null)
             {
                 return NotFound();
             }
-            ViewData["MemberId"] = new SelectList(_context.Members, "Id", "EmailAccount", orderDetail.MemberId);
+
+
+            //ViewData["MemberId"] = new SelectList(_context.Members, "Id", "EmailAccount", orderDetail.MemberId);
+            ViewBag.MemberId = orderDetail.Member.EmailAccount;
+            ViewData["State"] = new SelectList(_context.OrderDetails, "State", "State", orderDetail.State);
+
             return View(orderDetail);
         }
 

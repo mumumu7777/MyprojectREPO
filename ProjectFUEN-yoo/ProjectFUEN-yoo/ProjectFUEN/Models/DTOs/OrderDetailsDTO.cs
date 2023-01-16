@@ -22,7 +22,7 @@ namespace ProjectFUEN.Models.DTOs
         public string EmailAccount { get; set; }
 
         public virtual Member Member { get; set; }
-        public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public virtual ICollection<OrderItemVM> OrderItems { get; set; }
 
         
     }

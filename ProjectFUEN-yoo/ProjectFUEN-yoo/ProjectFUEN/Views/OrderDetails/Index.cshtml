@@ -5,6 +5,7 @@
 @using X.PagedList.Web.Common
 
 
+
 @{
     ViewData["Title"] = "Index";
     var pagedList = (IPagedList)ViewBag.OrderDetail;
@@ -42,7 +43,14 @@
 
 
 
-                        <div class="col-4">出貨狀態:@Html.DropDownList("state", state, new { @class = "form-control" })</div>
+@*                     <div class="col-4">出貨狀態:@Html.DropDownList("state", state, new { @class = "form-control" })</div>
+                *@    <div class="col-4">出貨狀態:@Html.DropDownList("State", (IEnumerable<SelectListItem>)ViewBag.SelectList, new { @class = "form-control" })</div>
+                    
+                    <select name="state1">
+                        <option value="0">未出貨</option>
+                        <option value="1">已出貨</option>
+                        <option value="2">已簽收</option>
+                    </select>
 
 
 
@@ -139,9 +147,25 @@
 
     <div style="align-content:center" class="text-dark page-custom1">
 
-        @(Html.Pager(pagedList)
+    @*    @(Html.Pager(pagedList)
             .Url(page => Url.Action("Index", new { page }))
-            .Build())
+            .Build())*@
+        @Html.PagedListPager((IPagedList)pagedList, page =>
+        Url.Action("Index", new { page = page }),
+       
+        new PagedListRenderOptions {
+
+        LiElementClasses = new string[] { "page-item" },
+        PageClasses = new string[] { "page-link" },
+
+            LinkToFirstPageFormat="<<第一頁",
+            LinkToPreviousPageFormat="<前一頁",
+            LinkToNextPageFormat="後一頁>",
+            LinkToLastPageFormat="最末頁>>"
+       
+
+        })
+
     </div>
 </table>
 
@@ -187,6 +211,9 @@
                 //    .fail(function(err){err.statuxtext});
 
                 //} )
+
+                 
+            })
 
 
     </script>

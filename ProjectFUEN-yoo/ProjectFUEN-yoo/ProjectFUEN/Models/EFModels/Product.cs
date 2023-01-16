@@ -2,7 +2,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace ProjectFUEN.Models.EFModels
 {
@@ -20,11 +19,11 @@ namespace ProjectFUEN.Models.EFModels
         public int Id { get; set; }
         public int CategoryId { get; set; }
         public int BrandId { get; set; }
+        public string Name { get; set; }
         public int Price { get; set; }
         public DateTime ManufactorDate { get; set; }
         public DateTime ReleaseDate { get; set; }
         public int Inventory { get; set; }
-        [Display(Name = "產品描述")]
         public string ProductSpec { get; set; }
 
         public virtual Brand Brand { get; set; }

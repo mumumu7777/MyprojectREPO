@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
 namespace ProjectFUEN.Models.EFModels
 {
@@ -15,14 +16,13 @@ namespace ProjectFUEN.Models.EFModels
 
         public int Id { get; set; }
         public int MemberId { get; set; }
-        [Display(Name ="訂單日期")]
+        [Display(Name = "訂單日期")]
         public DateTime OrderDate { get; set; }
-
         [Display(Name = "地址")]
         public string Address { get; set; }
         [Display(Name = "訂單狀態")]
         public int State { get; set; }
-        [Display(Name = "會員名稱")]
+
         public virtual Member Member { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }
     }
