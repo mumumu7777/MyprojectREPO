@@ -100,7 +100,7 @@ namespace ProjectFUEN.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderDetailsDTO>>> Search(int state1,int? state,string account, int? page = 1)
         {  
-            const int pageSize = 2;
+            const int pageSize = 5;
             ViewBag.State = GetState(state);
 
             var data = _context.OrderDetails.Include(o => o.Member).Select(x => new OrderDetailsDTO
@@ -326,41 +326,37 @@ namespace ProjectFUEN.Controllers
         }
 
         // GET: OrderDetails/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.OrderDetails == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null || _context.OrderDetails == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var orderDetail = await _context.OrderDetails
-                .Include(o => o.Member)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (orderDetail == null)
-            {
-                return NotFound();
-            }
+        //    var orderDetail = await _context.OrderDetails
+        //        .Include(o => o.Member)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (orderDetail == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(orderDetail);
-        }
+        //    return View(orderDetail);
+        //}
 
         // POST: OrderDetails/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpDelete]     
+        public void Delete(int id)
         {
-            if (_context.OrderDetails == null)
-            {
-                return Problem("Entity set 'ProjectFUENContext.OrderDetails'  is null.");
-            }
-            var orderDetail = await _context.OrderDetails.FindAsync(id);
+            if (_context.OrderDetails == null) return;
+
+            var orderDetail =  _context.OrderDetails.Find(id);
             if (orderDetail != null)
             {
                 _context.OrderDetails.Remove(orderDetail);
             }
             
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            _context.SaveChanges();
         }
 
         private bool OrderDetailExists(int id)

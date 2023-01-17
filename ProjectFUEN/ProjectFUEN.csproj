@@ -32,9 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Services\" />
-    <Folder Include="Models\Infrastructures\" />
-    <Folder Include="Models\Infrastructures\ExtensionMethods\" />
     <Folder Include="Models\Infrastructures\Repositories\" />
+    <Folder Include="Models\Services\" />
+    <Folder Include="Models\Infrastructures\ExtensionMethods\" />
   </ItemGroup>
 </Project>
