@@ -14,36 +14,36 @@
 
 
 <div class="col-10 mb-5 mt-5 ">
+	
+	<div class="caption align-items-xl-center ">
+		
+		<div class="row list-group-horizontal ">
 
-    <div class="caption align-items-xl-center ">
+			
+			@using (Html.BeginForm("Search", "OrderDetails", FormMethod.Get))
+			{
+			
+				<div class=" input-group col-12 align-items-center d justify-content-center">
+                    
+					<div class="input-group align-content-center d-flex col-4 ">
+                        <h2 class="ms-3">訂單管理</h2>
+						<div class="col-2  ms-3 ">@Html.DropDownList("State", (IEnumerable<SelectListItem>)ViewBag.SelectList, new { @class = "order-state form-control" })</div>
+						<input type="text" name="account" class="col-6 ms-3 " value="" id="Searchtext" placeholder="請輸入.." />
+						<button type="submit" class="btn btn-dark SearchClick" value="" id="SearchClick">
+							<i class="fa-solid fa-magnifying-glass "></i>
+						</button>
+					</div>
 
-        <div class="row list-group-horizontal ">
-
-
-            @using (Html.BeginForm("Search", "OrderDetails", FormMethod.Get))
-            {
-
-                <div class=" input-group col-12 align-items-center justify-content-center">
-                    <h3>訂單管理</h3>
-                    <div class="input-group justify-content-center d-flex ">
-                        <span class="justify-content-center"></span>
-                        <div class="col-2">@Html.DropDownList("State", (IEnumerable<SelectListItem>)ViewBag.SelectList, new { @class = "order-state form-control" })</div>
-                        <input type="text" name="account" class="col-2 ms-3 " value="" id="Searchtext" placeholder="請輸入.." />
-                        <button type="submit" class="btn btn-dark SearchClick" value="" id="SearchClick">
-                            <i class="fa-solid fa-magnifying-glass "></i>
-                        </button>
-                    </div>
-
-                </div>
-            }
-
-
+				</div>
+			}
 
 
 
-        </div>
 
-    </div>
+
+		</div>
+
+	</div>
 </div>
 
 
@@ -94,12 +94,12 @@
 
                 <td>
 
-                    <a class="FunBtn text-dark" asp-action="Edit" asp-route-id="@item.Id" data-fancybox data-type="iframe" class="fc1">
+                    <a class="FunBtn text-dark fc1" asp-action="Edit" asp-route-id="@item.Id" data-fancybox data-type="iframe">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </a> |
                     @* <a asp-action="Edit" asp-route-id="@item.Id">編輯</a> |*@
                     <a class="FunBtn text-dark" asp-controller="OrderItems" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i></a> |
-                    <a class="FunBtn text-dark" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash"></i></a>
+                    <a class="deleteOrder FunBtn text-dark" id="@item.Id" style="cursor:pointer"><i class="fa-solid fa-trash"></i></a>
                 </td>
             </tr>
         }
@@ -197,19 +197,19 @@
         switch (state)
         {
             case 0:
-                StateName = @$"<span style=""color: red ;"">未出貨</span>";
+                StateName = @$"<span style=""color:#7B7B7B ;"">未出貨</span>";
                 break;
             case 1:
-                StateName = @$"<span style=""color: green ;"">已出貨</span>";
+                StateName = @$"<span style=""color: #006000 ;"">已出貨</span>";
                 break;
             case 2:
-                StateName = @$"<span style=""color: #ccc ;"">運送中</span>";
+                StateName = @$"<span style=""color: #00A600 ;"">運送中</span>";
                 break;
             case 3:
-                StateName = "已簽收";
+                StateName = @$"<span style=""color: #02DF82 ;"">已簽收</span>";
                 break;
             case 4:
-                StateName = "已完成";
+                StateName = @$"<span style=""color: #00AEAE	 ;"">已完成</span>";
                 break;
             
 

@@ -27,18 +27,20 @@ namespace ProjectFUEN.Controllers
         }
 
         // GET: OrderItems/Details/5  //加入state
-        public async Task<IActionResult> Details(int? id)
+        public async Task<ActionResult<IEnumerable<OrderItem>>> Details(int? id)
         {
             if (id == null || _context.OrderItems == null)
             {
                 return NotFound();
             }
 
-            var orderItem = await _context.OrderItems
+            var orderItem =   _context.OrderItems
              
                 .Include(o => o.Order)
                 .Include(o => o.Product)
-                .FirstOrDefaultAsync(m => m.OrderId == id);
+                .Where(m => m.OrderId == id)
+                .AsEnumerable();
+                ;
             if (orderItem == null)
             {
                 return NotFound();

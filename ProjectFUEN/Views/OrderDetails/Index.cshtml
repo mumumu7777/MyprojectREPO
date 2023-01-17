@@ -28,13 +28,13 @@
 			
 			@using (Html.BeginForm("Search", "OrderDetails", FormMethod.Get))
 			{
-
-				<div class=" input-group col-12 align-items-center justify-content-center">		
-					<h3>訂單管理</h3>
-					<div class="input-group justify-content-center d-flex ">
-						<span class="justify-content-center"></span>
-						<div class="col-2">@Html.DropDownList("State", (IEnumerable<SelectListItem>)ViewBag.SelectList, new { @class = "order-state form-control" })</div>
-						<input type="text" name="account" class="col-2 ms-3 " value="" id="Searchtext" placeholder="請輸入.." />
+			
+				<div class=" input-group col-12 align-items-center d justify-content-center">
+                    
+					<div class="input-group align-content-center d-flex col-4 ">
+                        <h2 class="ms-3">訂單管理</h2>
+						<div class="col-2  ms-3 ">@Html.DropDownList("State", (IEnumerable<SelectListItem>)ViewBag.SelectList, new { @class = "order-state form-control" })</div>
+						<input type="text" name="account" class="col-6 ms-3 " value="" id="Searchtext" placeholder="請輸入.." />
 						<button type="submit" class="btn btn-dark SearchClick" value="" id="SearchClick">
 							<i class="fa-solid fa-magnifying-glass "></i>
 						</button>
@@ -91,11 +91,11 @@
 					@Html.DisplayFor(modelItem => item.Address)
 				</td>
 				<td>
-					@GetStateName(item.State)
+					@Html.Raw(GetStateName(item.State))
 				</td>
 
 				<td>
-					<a id="FunBtn" class="FunBtn text-dark" href="OrderDetails/Edit/@item.Id" data-fancybox data-type="iframe" class="fc1">
+					<a id="FunBtn" class="FunBtn text-dark fc1" href="OrderDetails/Edit/@item.Id" data-fancybox data-type="iframe" >
 						<i class=" fa-solid fa-pen-to-square"></i>
 					</a> |
 					<a id="FunBtn" class="FunBtn text-dark" asp-controller="OrderItems" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i></a> |
@@ -138,20 +138,12 @@
 
 
 @section Scripts
-	{
+{
 	<script>
 
 
 
-		//$(".pagination li").css({
-		//    "background-color": "yellow",
-		//    "margin-right": "0.25em",
-		//    "margin-left": "0.25em"
-
-		//})
-		//$(".pagination .active").css({ "background-color": "#ccc" })
-		//$(".pagination .PagedList-skipToNext").css({ "background-color": "red" })
-
+		
 
 
 		$('.fc1').fancybox({
@@ -199,9 +191,7 @@
 					}).fail(function (err) {
 						alert(err.statusText);
 					})
-
-					
-					
+								
 				}
 			})
 
@@ -221,20 +211,22 @@
 		switch (state)
 		{
 			case 0:
-				StateName = "未出貨";
+				StateName = @$"<span style=""color:#7B7B7B ;"">未出貨</span>";
 				break;
 			case 1:
-				StateName = "已出貨";
+				StateName = @$"<span style=""color: #006000 ;"">已出貨</span>";
 				break;
 			case 2:
-				StateName = "運送中";
+				StateName = @$"<span style=""color: #00A600 ;"">運送中</span>";
 				break;
 			case 3:
-				StateName = "已簽收";
+				StateName = @$"<span style=""color: #02DF82 ;"">已簽收</span>";
 				break;
 			case 4:
-				StateName = "已完成";
+				StateName = @$"<span style=""color: #00AEAE	 ;"">已完成</span>";
 				break;
+
+
 		}
 		return StateName;
 	}
